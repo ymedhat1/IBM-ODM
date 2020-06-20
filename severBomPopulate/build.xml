@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Licensed Materials - Property of IBM                           -->
+<!-- 5725-B69 5655-Y17 5724-Y00 5724-Y17 5655-V84                                     -->
+<!-- Copyright IBM Corp. 1987, 2017. All Rights Reserved            -->
+<!-- US Government Users Restricted Rights - Use, duplication or    -->
+<!-- disclosure restricted by GSA ADP Schedule Contract with        -->
+<!-- IBM Corp.                                                      -->
+
+
+<project name="How to populate BOM domains in Decision Center from a datasource" default="build" basedir=".">
+
+  <description>
+  How to populate BOM domains in Decision Center from a datasource
+  </description>
+
+  <property name="dc.home" location="${basedir}/../../.." />
+  <property name="teamserver.home" value="${dc.home}/teamserver"/>
+  <property name="odm.wlp.scripts.dir" value="${dc.home}/shared/samplesServer/wlp" />
+  <import file="${odm.wlp.scripts.dir}/build.xml"/>
+  <property name="server.url" value="http://${server.host}:${server.port}/teamserver" />
+  
+  <import file="${teamserver.home}/lib/classpath-teamserver.xml"/>
+  <import file="${teamserver.home}/bin/build.xml"/>
+
+  <property name="src.dir" location="src"/>
+  <property name="build.dir" location="build"/>
+  <property name="classes.dir" location="${build.dir}/classes"/>
+  <property name="webresources.dir" location="${build.dir}/webresources"/>
+  <property name="decisioncenter.appli.name" value="decisioncenter.war"/>
+  <property name="decisioncenter.appli.source" value="${teamserver.home}/applicationservers/sample/${decisioncenter.appli.name}"/>
+  <property name="console" value="business"/>
+  <property name="teamserver.sample.dir" value="${teamserver.home}/applicationservers/sample" /> 
+
+  <!-- C L E A N -->
+  <target name="clean" description="Clean the built files">
+    <delete dir="${build.dir}" />
+  </target>
+
+  <!-- B U I L D -->
+  <target name="build" description="" >
+    <mkdir dir="${classes.dir}"/>
+    <javac includeantruntime="true" srcdir="${src.dir}" destdir="${classes.dir}" nowarn="true" source="1.7" target="1.7" classpathref="teamserver.classpath"    debug="true" fork="true" />
+    <mkdir dir="${build.dir}/lib" />
+    <jar destfile="${build.dir}/lib/serverbompopulate.jar" basedir="${classes.dir}" />
+  </target>
+
+  <!-- R E P A C K -->
+  <target name="repack" depends="build" description="Rebuild a teamserver AR corresponding to the new application">
+    <mkdir dir="${webresources.dir}/WEB-INF/lib"/>
+    <copy file="${build.dir}/lib/serverbompopulate.jar" todir="${webresources.dir}/WEB-INF/lib"/>
+	<copy file="${teamserver.sample.dir}/decisioncenter.war" todir="${build.dir}" />
+    <!-- repack for BC  -->
+	<repackage-war 
+		sourceWar="${build.dir}/decisioncenter.war" 
+		targetWar="${build.dir}/decisioncenter.war" 
+		additionalJars="${build.dir}/lib/serverbompopulate.jar" 
+		webResourcesDir="${webresources.dir}">
+	</repackage-war>
+  </target>
+
+  <!-- S E T - C O N F I G - P A R A M -->
+  <target name="set-config-param" description="" >
+    <set-config-param
+      appserverName="${appserver.name}"
+      key="teamserver.ALEXDataBaseDomainProvider"
+      value="serverbompopulate.DomainValueProvider"
+      username="${rtsAdmin.login}"
+      password="${rtsAdmin.password}"
+      serverURL="${server.url}"
+      datasourceName="${db.dataSource}"
+      />
+  </target>
+
+  <!-- P R I N T - C O N F I G - P A R A M -->
+  <target name="print-config-param" description="Print the teamserver properties" >
+    <print-config-param
+      appserverName="${appserver.name}"
+      username="${rtsAdmin.login}"
+      password="${rtsAdmin.password}"
+      serverURL="${server.url}"
+      datasourceName="${db.dataSource}"
+      />
+  </target>
+
+  <!-- R E M O V E - C O N F I G - P A R A M -->
+  <target name="remove-config-param" description="" >
+    <remove-config-param
+      appserverName="${appserver.name}"
+      key="teamserver.derbyDataBaseDomainProvider"
+      username="${rtsAdmin.login}"
+      password="${rtsAdmin.password}"
+      serverURL="${server.url}"
+      datasourceName="${db.dataSource}"
+      />
+  </target>
+
+  <!-- D E P L O Y -->
+  <target name="deploy" description="Deploy the custom WAR to sample server" >
+    <module.deploy path="${build.dir}/${decisioncenter.appli.name}" />
+    <waitfor maxwait="10" maxwaitunit="minute" checkevery="2" checkeveryunit="second" timeoutproperty="deployment.time.out">
+            <http url="${server.url}/css/IlogStyle.css" />
+    </waitfor>
+    <fail message="Deployment timed out. Check your server status." if="deployment.time.out" />
+    <echo>Application ready. You can now sign in to Decision Center.</echo>
+  </target>
+
+</project>
