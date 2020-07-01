@@ -38,7 +38,7 @@ To enable the use of this sample you will need to:
         ⁃	SQL Statement (The select values statement that will retrieve all the above from the DB)
     c) Add another properties file in case of other connections
 
-Once your configuration is complete and mongoDB is running, you can start building the plugin with ant tasks:
+Once your configuration is complete, you can start building the plugin with ant tasks:
 - Clean
 - Build
 
@@ -53,7 +53,7 @@ How to use:
               ⁃	Code Column (retrieved from the DB)
               ⁃	SQL Statement (The select values statement that will retrieve all the above from the DB)
         c) Add another properties file in case of other connections
-	2.	Once your configuration is complete and mongoDB is running, you can start building the plugin with ant tasks:
+	2.	Once your configuration is complete, you can start building the plugin with ant tasks:
 	    	- Clean
         - Build
 	3.	Deploy using the deployment steps available in https://www.ibm.com/support/knowledgecenter/SSQP76_8.7.1/com.ibm.odm.dcenter.custom/topics/tsk_authoring_dc_domains.html using the following steps:
