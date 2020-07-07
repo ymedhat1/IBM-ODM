@@ -67,3 +67,5 @@ This asset is being developed mainly as an extension of the Data Sources for BOM
 	2.	Creating a UI wizard that will guide the developer to select BOM members and map them to the DB
 	3.	Automated building of the properties file using the information gathered from (2)
 	4.	Adding web service domain values retrieval
+	
+	
