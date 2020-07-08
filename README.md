@@ -1,7 +1,7 @@
 Database Dynamic Domain Plugin
 -------------------------------------
 The DB Dynamic Domain Plugin is an easy to use code that helps developers configure their own dynamic plugin on any DB. It is a simple step by step instructions that is based upon the sample provided in the ODM samples named “serverBomPopulate under “Data Sources for BOM Domains” category.
-This tool was born out of 3 business needs:
+This tool was born out of 2 business needs:
 	1.	It enables dynamic synchronization of DB elements with the BOM.
 	2.	The usability for developers and no need to re-implement for every business project/need.
 
